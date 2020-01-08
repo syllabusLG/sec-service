@@ -1,12 +1,13 @@
 package org.sid.service;
 
+import java.util.ArrayList;
+
 import javax.transaction.Transactional;
 
 import org.sid.dao.AppRoleRepository;
 import org.sid.dao.AppUserRepository;
 import org.sid.entities.AppRole;
 import org.sid.entities.AppUser;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,12 +15,21 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class AccountServiceImpl implements AccountService {
 	
-	@Autowired
+
 	private AppUserRepository userRepository;
-	@Autowired
+
 	private AppRoleRepository roleRepository;
-	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	
+	
+
+	public AccountServiceImpl(AppUserRepository userRepository, AppRoleRepository roleRepository,
+			BCryptPasswordEncoder bCryptPasswordEncoder) {
+		super();
+		this.userRepository = userRepository;
+		this.roleRepository = roleRepository;
+		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+	}
 
 	@Override
 	public AppUser saveUser(String username, String password, String confirmedPassword) {
@@ -30,7 +40,8 @@ public class AccountServiceImpl implements AccountService {
 		appUser.setUsername(username);
 		appUser.setActivated(true);
 		appUser.setPassword(bCryptPasswordEncoder.encode(password));
-		addRoleToUser(username, "USER");
+		//addRoleToUser(username, "USER");
+		appUser.getRole().add(roleRepository.findByRoleName("USER"));
 		userRepository.save(appUser);
 		return appUser;
 	}
@@ -49,9 +60,11 @@ public class AccountServiceImpl implements AccountService {
 	public void addRoleToUser(String username, String roleName) {
 		AppUser user = userRepository.findByUsername(username);
 		AppRole role = roleRepository.findByRoleName(roleName);
-		if(user != null && role != null) {
+		if (user != null && role != null) {
 			user.getRole().add(role);
 		}
+		
+
 	}
 
 }
