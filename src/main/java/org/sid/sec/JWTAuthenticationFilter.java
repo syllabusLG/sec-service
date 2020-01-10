@@ -54,9 +54,9 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .withIssuer(request.getRequestURI())
                 .withSubject(user.getUsername())
                 .withArrayClaim("roles", roles.toArray(new String[roles.size()]))
-                .withExpiresAt(new Date(System.currentTimeMillis()+10*24*3600))
-                .sign(Algorithm.HMAC256("syllabus@baba.net"));
-        response.addHeader("Authorization", jwt);
+                .withExpiresAt(new Date(System.currentTimeMillis()+SecurityPrams.EXPIRATION))
+                .sign(Algorithm.HMAC256(SecurityPrams.SECRET));
+        response.addHeader(SecurityPrams.JWT_HEADER_NAME, jwt);
 
     }
 }
