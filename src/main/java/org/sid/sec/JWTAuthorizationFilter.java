@@ -28,13 +28,14 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         response.addHeader("Access-Control-Allow-Origin", "*");
         response.addHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, authorization");
         response.addHeader("Access-Control-Expose-Headers", "Access-Control-Allow-Origin, Access-Control-Allow-Credentials, authorization");
+        response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH");
         if (request.getMethod().equals("OPTIONS")) {
             response.setStatus(HttpServletResponse.SC_OK);
         }
-        /*if (request.getRequestURI().equals("/login")) {
+        if (request.getRequestURI().equals("/login")) {
             filterChain.doFilter(request, response);
             return;
-        }*/
+        }
         String jwtToken = request.getHeader(SecurityPrams.JWT_HEADER_NAME);
         System.out.println("Token = "+jwtToken);
         if (jwtToken == null || !jwtToken.startsWith(SecurityPrams.HEADER_PREFIX)){
